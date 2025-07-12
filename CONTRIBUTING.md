@@ -67,6 +67,8 @@ IngrediGuard includes a versioning utility script that helps manage version chan
 
 ### Using the Version Bump Script
 
+> ⚠️ **Important**: The version bump script should only be run on the main branch. The script will check your current branch and prevent execution if you're not on the main branch. You can override this with the `--force` flag if necessary.
+
 The `version_bump.py` script handles versioning tasks automatically:
 
 ```bash
@@ -81,23 +83,41 @@ python version_bump.py major
 
 # To set a pre-release designation
 python version_bump.py minor beta  # Creates v0.2.0-beta
+
+# To force execution on a non-main branch (not recommended)
+python version_bump.py patch --force
 ```
 
 ### Release Process
 
-1. **Ensure all changes are committed** to your branch
-2. **Run the version bump script** appropriate for your change type
-3. When prompted, choose `y` to create the Git tag
-4. **Push the changes and tag**:
+1. **Ensure all changes are merged to the main branch** - Version bumping should only be done on the main branch
+
+2. **Switch to the main branch and ensure it's up to date**:
 
    ```bash
-   git push origin symmantic-versioning  # Or your current branch
-   git push origin v1.2.3                # Push the specific tag
+   git checkout main
+   git pull origin main
    ```
 
-5. **Create a release on GitHub** by:
-   - The CI pipeline will automatically create a GitHub Release when you push a tag
-   - The release will include automatically built AAB files for Android
+3. **Run the version bump script** appropriate for your change type:
+
+   ```bash
+   python version_bump.py patch  # or minor/major as appropriate
+   ```
+
+4. When prompted, choose `y` to create the Git tag
+
+5. **Push the changes and tag**:
+
+   ```bash
+   git push origin main
+   git push origin v1.2.3  # Push the specific tag
+   ```
+
+6. **GitHub Actions will automatically**:
+   - Create a GitHub Release based on the tag
+   - Build the signed AAB file and attach it to the release
+   - Generate release notes from commit history
 
 ### What Happens When You Push a Tag
 

@@ -20,6 +20,19 @@ import os
 import subprocess
 from version import VERSION_INFO, get_version
 
+def get_current_branch():
+    """Return the current git branch name."""
+    try:
+        result = subprocess.run(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError:
+        return None
+
 def update_version_file(version_type, release=None):
     """Update the version.py file with new version numbers."""
     with open('version.py', 'r') as f:
@@ -73,6 +86,8 @@ def update_version_file(version_type, release=None):
 def create_git_tag(version):
     """Create a Git tag for the new version."""
     try:
+        current_branch = get_current_branch()
+        
         # Add the version file
         subprocess.run(['git', 'add', 'version.py'], check=True)
         
@@ -84,7 +99,7 @@ def create_git_tag(version):
         
         print(f"\nGit tag '{version}' created successfully!")
         print("\nTo push the new version to the repository, run:")
-        print(f"  git push origin main {version}")
+        print(f"  git push origin {current_branch} {version}")
         return True
     except subprocess.CalledProcessError as e:
         print(f"Error creating git tag: {e}")
@@ -96,8 +111,26 @@ def main():
         print(__doc__)
         return 1
     
+    # Check if we're on the main branch
+    current_branch = get_current_branch()
+    if current_branch != "main":
+        print(f"Error: You are currently on branch '{current_branch}'")
+        print("Version bumping should only be performed on the main branch.")
+        
+        # Allow override with force flag
+        if len(sys.argv) > 2 and sys.argv[-1] == "--force":
+            print("\nForce flag detected. Proceeding anyway...\n")
+        else:
+            print("\nIf you're absolutely sure you want to proceed anyway, run with --force")
+            print("Example: python version_bump.py patch --force")
+            return 1
+    
     version_type = sys.argv[1]
-    release = sys.argv[2] if len(sys.argv) > 2 else None
+    
+    # Check if release is specified (but not a --force flag)
+    release = None
+    if len(sys.argv) > 2 and sys.argv[2] != "--force":
+        release = sys.argv[2]
     
     print(f"Current version: {get_version()}")
     
