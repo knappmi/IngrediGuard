@@ -312,8 +312,8 @@ android.allow_backup = True
 android.release_artifact = aab
 android.release_keystore = android/keystore/ingrediguard-release-key.jks
 android.release_keyalias = ingrediguard-release
-android.release_keystore_pass = %(environ)s[KEYSTORE_PASSWORD]
-android.release_keyalias_pass = %(environ)s[KEY_ALIAS_PASSWORD]
+android.release_keystore_pass = %(environ:KEYSTORE_PASSWORD)s
+android.release_keyalias_pass = %(environ:KEY_ALIAS_PASSWORD)s
 
 # (str) The format used to package the app for debug mode (apk or aar).
 # android.debug_artifact = apk
