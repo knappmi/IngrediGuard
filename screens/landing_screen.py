@@ -4,6 +4,7 @@ from kivy.uix.button import Button
 from kivy.logger import Logger
 # from opentelemetry import trace
 from utils.error_handler import error_handler
+from version import get_version
 
 class LandingScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -21,6 +22,16 @@ class LandingScreen(BaseScreen):
 
         self.admin_button = Button(text="Admin Tools", size_hint_y=None, height=50)
         self.admin_button.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))
+
+        # Add version label at the bottom of the screen
+        self.version_label = Label(
+            text=f"Version {get_version()}",
+            font_size='14sp',
+            size_hint_y=None,
+            height=30,
+            color=(0.7, 0.7, 0.7, 1)  # Light gray
+        )
+        self.layout.add_widget(self.version_label)
 
         self.add_back_button("login")
 

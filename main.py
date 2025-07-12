@@ -17,6 +17,7 @@ from screens.landing_screen import LandingScreen
 from screens.login_screen import LoginScreen
 from utils.feature_flags import OCR_ENABLED
 from models.menu_database import MenuDatabase
+from version import __version__, get_version
 
 # Conditional import to avoid pulling in OCR dependencies when the feature is
 # disabled.
@@ -34,10 +35,13 @@ class AllergyApp(App):
         # Telemetry setup commented out
         # self.tracer = setup_telemetry()
         # KivyInstrumentor().instrument()
+        self.version = get_version()
+        Logger.info(f"[AllergyApp] Starting IngrediGuard {self.version}")
 
     def build(self):
         """Build the main application."""
         Logger.info("[AllergyApp] Building the application")
+        self.title = f"IngrediGuard {self.version}"
 
         Logger.info("[AllergyApp] Initializing ScreenManager")
         sm = ScreenManager()
