@@ -10,9 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: kivy/python-for-android:latest
+      options: --user root
     if: github.ref != 'refs/heads/main'
     
     steps:
+    - name: Fix permissions
+      run: |
+        chmod -R 777 /__w
+        mkdir -p /__w/_temp/_runner_file_commands
+        chmod 777 /__w/_temp/_runner_file_commands
+    
     - name: Checkout code
       uses: actions/checkout@v4
     
@@ -43,9 +50,16 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: kivy/python-for-android:latest
+      options: --user root
     if: github.ref == 'refs/heads/main'
     
     steps:
+    - name: Fix permissions
+      run: |
+        chmod -R 777 /__w
+        mkdir -p /__w/_temp/_runner_file_commands
+        chmod 777 /__w/_temp/_runner_file_commands
+    
     - name: Checkout code
       uses: actions/checkout@v4
     
