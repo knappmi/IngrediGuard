@@ -1,0 +1,45 @@
+image: kivy/python-for-android:latest
+
+stages:
+  - build
+
+build_apk:
+  stage: build
+  retry: 2
+  only:
+    - working_branch
+  before_script:
+    - pip install --upgrade pip
+    - pip install --no-cache-dir buildozer==1.5.0 "Cython<3.0"
+    - pip install -r requirements.txt
+
+  script:
+    - mkdir -p artifacts
+    - buildozer --verbose android debug 2>&1 | tee artifacts/build_apk.log
+  artifacts:
+    paths:
+      - bin/*.apk
+      - artifacts/
+
+build_aab:
+  stage: build
+  retry: 2
+  only:
+    - build
+  before_script:
+    - pip install --upgrade pip
+    - pip install --no-cache-dir buildozer==1.5.0 "Cython<3.0"
+    - pip install -r requirements.txt
+  script:
+    - mkdir -p artifacts
+    - |
+      export P4A_RELEASE_KEYSTORE=$CI_PROJECT_DIR/android/keystore/release-key.jks
+      export P4A_RELEASE_KEYSTORE_PASSWD=P@ssw0rd
+      export P4A_RELEASE_KEYALIAS_PASSWD=P@ssw0rd
+      export P4A_RELEASE_KEYALIAS=wgu-dev-key
+      buildozer --verbose android release 2>&1 | tee artifacts/build_aab.log
+  artifacts:
+    when: always
+    paths:
+      - bin/*.aab
+      - artifacts/
