@@ -8,10 +8,10 @@ Version follows semantic versioning (https://semver.org/):
   - PATCH version for backwards compatible bug fixes
 """
 
-__version__ = '0.1.0'  # Initial personal project version
+__version__ = '1.0.0'  # Initial personal project version
 VERSION_INFO = {
-    'major': 0,
-    'minor': 1,
+    'major': 1,
+    'minor': 0,
     'patch': 0,
     'release': 'alpha',
     'build': '',
