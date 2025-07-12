@@ -3,19 +3,14 @@ name: Build Android App
 on:
   push:
     branches:
-      - working_branch  # For APK builds
-      - build          # For AAB builds
-  pull_request:
-    branches:
-      - working_branch
-      - build
+      - '*'  # Trigger on any branch push
 
 jobs:
   build_apk:
     runs-on: ubuntu-latest
     container:
       image: kivy/python-for-android:latest
-    if: github.ref == 'refs/heads/working_branch' || github.base_ref == 'working_branch'
+    if: github.ref != 'refs/heads/main'
     
     steps:
     - name: Checkout code
@@ -48,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: kivy/python-for-android:latest
-    if: github.ref == 'refs/heads/build' || github.base_ref == 'build'
+    if: github.ref == 'refs/heads/main'
     
     steps:
     - name: Checkout code
