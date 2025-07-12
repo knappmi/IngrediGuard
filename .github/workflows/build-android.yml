@@ -82,9 +82,11 @@ jobs:
         P4A_RELEASE_KEYSTORE_PASSWD: ${{ secrets.KEYSTORE_PASSWORD }}
         P4A_RELEASE_KEYALIAS_PASSWD: ${{ secrets.KEY_ALIAS_PASSWORD }}
         P4A_RELEASE_KEYALIAS: ${{ secrets.KEY_ALIAS || 'ingrediguard-release' }}
-        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        KEY_ALIAS_PASSWORD: ${{ secrets.KEY_ALIAS_PASSWORD }}
       run: |
+        # Debug info to verify environment variables
+        echo "Using keystore: $P4A_RELEASE_KEYSTORE"
+        echo "Using key alias: $P4A_RELEASE_KEYALIAS"
+        echo "Keystore exists: $([ -f $P4A_RELEASE_KEYSTORE ] && echo 'Yes' || echo 'No')"
         buildozer --verbose android release 2>&1 | tee artifacts/build_aab.log
     
     - name: Upload AAB artifacts
