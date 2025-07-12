@@ -1,0 +1,83 @@
+name: Build Android App
+
+on:
+  push:
+    branches:
+      - working_branch  # For APK builds
+      - build          # For AAB builds
+  pull_request:
+    branches:
+      - working_branch
+      - build
+
+jobs:
+  build_apk:
+    runs-on: ubuntu-latest
+    container:
+      image: kivy/python-for-android:latest
+    if: github.ref == 'refs/heads/working_branch' || github.base_ref == 'working_branch'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Python dependencies
+      run: |
+        pip install --upgrade pip
+        pip install --no-cache-dir buildozer==1.5.0 "Cython<3.0"
+        pip install -r requirements.txt
+    
+    - name: Create artifacts directory
+      run: mkdir -p artifacts
+    
+    - name: Build APK
+      run: |
+        buildozer --verbose android debug 2>&1 | tee artifacts/build_apk.log
+    
+    - name: Upload APK artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: apk-artifacts
+        path: |
+          bin/*.apk
+          artifacts/
+        retention-days: 30
+
+  build_aab:
+    runs-on: ubuntu-latest
+    container:
+      image: kivy/python-for-android:latest
+    if: github.ref == 'refs/heads/build' || github.base_ref == 'build'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Python dependencies
+      run: |
+        pip install --upgrade pip
+        pip install --no-cache-dir buildozer==1.5.0 "Cython<3.0"
+        pip install -r requirements.txt
+    
+    - name: Create artifacts directory
+      run: mkdir -p artifacts
+    
+    - name: Build AAB (Release)
+      env:
+        P4A_RELEASE_KEYSTORE: ${{ github.workspace }}/android/keystore/need-key.jks
+        P4A_RELEASE_KEYSTORE_PASSWD: ${{ secrets.KEYSTORE_PASSWORD || 'changeme' }}
+        P4A_RELEASE_KEYALIAS_PASSWD: ${{ secrets.KEY_ALIAS_PASSWORD || 'changeme' }}
+        P4A_RELEASE_KEYALIAS: ${{ secrets.KEY_ALIAS || 'wgu-dev-key' }}
+      run: |
+        buildozer --verbose android release 2>&1 | tee artifacts/build_aab.log
+    
+    - name: Upload AAB artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: aab-artifacts
+        path: |
+          bin/*.aab
+          artifacts/
+        retention-days: 30
