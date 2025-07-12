@@ -36,3 +36,10 @@ android_testing/*
 *.bat
 .envrc
 _buildozer.spec
+
+# Android signing keystore and sensitive files
+android/keystore/*.jks
+android/keystore/*.p12
+android/keystore/*.keystore
+keystore_base64.txt
+*.aab

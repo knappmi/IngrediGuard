@@ -58,12 +58,18 @@ jobs:
     - name: Create artifacts directory
       run: mkdir -p artifacts
     
+    - name: Decode keystore
+      run: |
+        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/keystore/ingrediguard-release-key.jks
+    
     - name: Build AAB (Release)
       env:
-        P4A_RELEASE_KEYSTORE: ${{ github.workspace }}/android/keystore/need-key.jks
-        P4A_RELEASE_KEYSTORE_PASSWD: ${{ secrets.KEYSTORE_PASSWORD || 'changeme' }}
-        P4A_RELEASE_KEYALIAS_PASSWD: ${{ secrets.KEY_ALIAS_PASSWORD || 'changeme' }}
-        P4A_RELEASE_KEYALIAS: ${{ secrets.KEY_ALIAS || 'wgu-dev-key' }}
+        P4A_RELEASE_KEYSTORE: ${{ github.workspace }}/android/keystore/ingrediguard-release-key.jks
+        P4A_RELEASE_KEYSTORE_PASSWD: ${{ secrets.KEYSTORE_PASSWORD }}
+        P4A_RELEASE_KEYALIAS_PASSWD: ${{ secrets.KEY_ALIAS_PASSWORD }}
+        P4A_RELEASE_KEYALIAS: ${{ secrets.KEY_ALIAS || 'ingrediguard-release' }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS_PASSWORD: ${{ secrets.KEY_ALIAS_PASSWORD }}
       run: |
         buildozer --verbose android release 2>&1 | tee artifacts/build_aab.log
     

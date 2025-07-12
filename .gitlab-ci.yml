@@ -33,10 +33,10 @@ build_aab:
   script:
     - mkdir -p artifacts
     - |
-      export P4A_RELEASE_KEYSTORE=$CI_PROJECT_DIR/android/keystore/need-key.jks # Generate new key
-      export P4A_RELEASE_KEYSTORE_PASSWD=changeme # Use the same password for the keystore
-      export P4A_RELEASE_KEYALIAS_PASSWD=changeme # Use the same password for the key alias
-      export P4A_RELEASE_KEYALIAS=wgu-dev-key # Use the same alias for the key
+      export P4A_RELEASE_KEYSTORE=$CI_PROJECT_DIR/android/keystore/ingrediguard-release-key.jks
+      export P4A_RELEASE_KEYSTORE_PASSWD=$KEYSTORE_PASSWORD
+      export P4A_RELEASE_KEYALIAS_PASSWD=$KEY_ALIAS_PASSWORD
+      export P4A_RELEASE_KEYALIAS=ingrediguard-release
       buildozer --verbose android release 2>&1 | tee artifacts/build_aab.log
   artifacts:
     when: always

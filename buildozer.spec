@@ -7,7 +7,7 @@ title = IngrediGuard
 package.name = ingrediguard
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = wgu.capstone
+package.domain = com.ingrediguard
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -310,10 +310,10 @@ android.allow_backup = True
 
 # (str) The format used to package the app for release mode (aab or apk or aar).
 android.release_artifact = aab
-android.release_keystore = android/keystore/release-key.jks
-android.release_keyalias = wgu-dev-key
-android.release_keystore_pass = P@ssw0rd
-android.release_keyalias_pass = P@ssw0rd
+android.release_keystore = android/keystore/ingrediguard-release-key.jks
+android.release_keyalias = ingrediguard-release
+android.release_keystore_pass = %(environ)s[KEYSTORE_PASSWORD]
+android.release_keyalias_pass = %(environ)s[KEY_ALIAS_PASSWORD]
 
 # (str) The format used to package the app for debug mode (apk or aar).
 # android.debug_artifact = apk
