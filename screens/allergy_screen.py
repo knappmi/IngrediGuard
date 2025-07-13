@@ -4,9 +4,11 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.gridlayout import GridLayout
 from kivy.logger import Logger
 from utils.error_handler import error_handler
-from utils.allergy_filter import perform_allergy_filter
+from utils.allergy_filter import perform_allergy_filter, ALLERGEN_MAP
 
 class AllergyScreen(BaseScreen):
     def __init__(self, **kwargs):
@@ -33,20 +35,76 @@ class AllergyScreen(BaseScreen):
         input_wrapper = BoxLayout(
             orientation='horizontal',
             size_hint_y=None,
-            height=40  # Reduced from 50 to 40
+            height=50  # Increased from 40 to 50
         )
         
         self.allergen_input = TextInput(
             hint_text='Type allergen(s)...',
             multiline=False,
-            size_hint_x=0.7,  # Width at 70%
+            size_hint_x=0.8,  # Increased from 0.7 to 0.8
             size_hint_y=None,
-            height=30,  # Explicitly setting a lower height
-            pos_hint={'center_x': 0.5}
+            height=40,  # Increased from 30 to 40
+            pos_hint={'center_x': 0.5},
+            font_size=18  # Added font size for better readability
         )
         
         input_wrapper.add_widget(self.allergen_input)
         self.layout.add_widget(input_wrapper)
+
+        # Add a label for quick filters
+        self.layout.add_widget(Label(
+            text='Common Allergens:',
+            size_hint_y=None,
+            height=30,
+            halign='center'
+        ))
+        
+        # Create scrollview for allergen quick filters
+        quick_filters_scroll = ScrollView(
+            size_hint_y=None,
+            height=120  # Set a fixed height for the quick filters area
+        )
+        
+        # Use a grid layout for the quick filter buttons
+        quick_filters_grid = GridLayout(
+            cols=3,  # 3 buttons per row
+            spacing=5,
+            padding=5,
+            size_hint_y=None
+        )
+        quick_filters_grid.bind(minimum_height=quick_filters_grid.setter('height'))
+        
+        # Add buttons for common allergens
+        common_allergens = list(ALLERGEN_MAP.keys())
+        for allergen in common_allergens:
+            # Create a button for each allergen
+            allergen_btn = Button(
+                text=allergen.title(),  # Capitalize the allergen name
+                size_hint_y=None,
+                height=40,
+                background_color=(0.3, 0.6, 0.9, 1.0)  # Light blue color
+            )
+            
+            # Create a callback that adds this allergen to the input
+            def create_allergen_callback(allergen_name):
+                def callback(instance):
+                    current_text = self.allergen_input.text.strip()
+                    if current_text:
+                        # If there's already text, append with a comma
+                        self.allergen_input.text = f"{current_text}, {allergen_name}"
+                    else:
+                        # Otherwise just set the text
+                        self.allergen_input.text = allergen_name
+                return callback
+            
+            allergen_btn.bind(on_press=create_allergen_callback(allergen))
+            quick_filters_grid.add_widget(allergen_btn)
+        
+        quick_filters_scroll.add_widget(quick_filters_grid)
+        self.layout.add_widget(quick_filters_scroll)
+        
+        # Add some space between quick filters and the main filter button
+        self.layout.add_widget(Widget(size_hint_y=None, height=10))
 
         # Button for filtering - slightly larger
         button_wrapper = BoxLayout(
@@ -67,9 +125,41 @@ class AllergyScreen(BaseScreen):
         button_wrapper.add_widget(self.filter_button)
         self.layout.add_widget(button_wrapper)
         
+        # Quick filter buttons for common allergens
+        self.quick_filter_layout = GridLayout(
+            cols=3,
+            size_hint_y=None,
+            height=40,  # Fixed height
+            padding=[10, 5, 10, 5],
+            spacing=10
+        )
+        
+        # Create buttons for each common allergen
+        self.allergen_buttons = {}
+        for allergen in ALLERGEN_MAP.keys():
+            btn = Button(
+                text=allergen.capitalize(),
+                size_hint_x=None,
+                width=80,  # Fixed width
+                height=40
+            )
+            btn.bind(on_press=self.quick_filter)
+            self.quick_filter_layout.add_widget(btn)
+            self.allergen_buttons[allergen] = btn
+        
+        # Add the quick filter buttons inside a ScrollView for better accessibility
+        self.scroll_view = ScrollView(
+            size_hint=(1, None),
+            size=(self.width, 50),  # Fixed height
+            do_scroll_x=True,
+            do_scroll_y=False
+        )
+        self.scroll_view.add_widget(self.quick_filter_layout)
+        self.layout.add_widget(self.scroll_view)
+        
         # Add flexible space to push admin and back buttons to the bottom
-        # Use a smaller flexible space since we've reduced other elements' heights
-        self.layout.add_widget(Widget(size_hint_y=0.7))
+        # Use a smaller flexible space since we've added quick filters
+        self.layout.add_widget(Widget(size_hint_y=0.3))
 
         # Create admin button but don't add it yet (will be added in on_pre_enter if admin)
         self.admin_btn = Button(text="Admin Tools", size_hint_y=None, height=40)
@@ -107,6 +197,24 @@ class AllergyScreen(BaseScreen):
 
         if filtered_menu is None:
             self.set_status("Please enter at least one allergen.")
+            return
+
+        self.manager.filtered_menu = filtered_menu
+        self.manager.current = 'results'
+
+    @error_handler
+    def quick_filter(self, instance):
+        """
+        Quick filter method for common allergens.
+        """
+        allergen = instance.text.lower()
+        Logger.info(f"[AllergyScreen] Quick filtering menu for allergen: {allergen}")
+        
+        menu_data = self.manager.menu_data
+        filtered_menu = perform_allergy_filter(menu_data, allergen)
+
+        if filtered_menu is None:
+            self.set_status("No safe dishes found for this allergen.")
             return
 
         self.manager.filtered_menu = filtered_menu
