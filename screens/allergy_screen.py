@@ -2,6 +2,7 @@ from screens.base_screen import BaseScreen
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
 from kivy.logger import Logger
 from utils.error_handler import error_handler
 from utils.allergy_filter import perform_allergy_filter
@@ -23,9 +24,24 @@ class AllergyScreen(BaseScreen):
         self.allergen_input = TextInput(hint_text='Type allergen(s)...', multiline=False)
         self.layout.add_widget(self.allergen_input)
 
-        self.filter_button = Button(text='Show Safe Dishes')
+        # Create a button wrapper to center the button
+        button_wrapper = BoxLayout(
+            orientation='horizontal',
+            size_hint_y=None,
+            height=60,
+            padding=[0, 10, 0, 0]
+        )
+        
+        self.filter_button = Button(
+            text='Show Safe Dishes',
+            size_hint=(0.7, None),  # 70% of the width
+            height=40,              # Reduced height
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+        )
         self.filter_button.bind(on_press=self.filter_menu)
-        self.layout.add_widget(self.filter_button)
+        
+        button_wrapper.add_widget(self.filter_button)
+        self.layout.add_widget(button_wrapper)
 
         self.admin_btn = Button(text="Admin Tools", size_hint_y=None, height=40)
         self.admin_btn.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))

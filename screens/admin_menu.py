@@ -22,19 +22,19 @@ class AdminMenuScreen(BaseScreen):
         Logger.info("[AdminMenuScreen] Initializing Admin Menu Screen")
         super().__init__(**kwargs)
 
-        self.scroll = ScrollView(size_hint=(1, 0.6))
-        self.menu_grid = GridLayout(cols=1, spacing=10, size_hint_y=None, size_hint_x=1)
-        self.menu_grid.bind(minimum_height=self.menu_grid.setter('height'))
-        self.scroll.add_widget(self.menu_grid)
-        self.layout.add_widget(self.scroll)
-
+        # Input fields for adding dishes (moved to the top)
+        input_layout = BoxLayout(orientation='vertical', size_hint_y=None, height=90, spacing=10)
+        
         self.item_input = TextInput(hint_text="Dish name", size_hint_y=None, height=40)
         self.ingredients_input = TextInput(hint_text="Ingredients (comma-separated)", size_hint_y=None, height=40)
-        self.layout.add_widget(self.item_input)
-        self.layout.add_widget(self.ingredients_input)
-
+        
+        input_layout.add_widget(self.item_input)
+        input_layout.add_widget(self.ingredients_input)
+        self.layout.add_widget(input_layout)
+        
+        # Buttons for actions
         btn_layout = GridLayout(cols=3, size_hint_y=None, height=40, spacing=10)
-
+        
         add_button = Button(text="Add Dish")
         back_button = Button(text="Back")
         clear_button = Button(text="Clear Menu")
@@ -42,11 +42,18 @@ class AdminMenuScreen(BaseScreen):
         add_button.bind(on_press=self.add_dish)
         back_button.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))
         clear_button.bind(on_press=self.confirm_clear_menu)
-
+        
         btn_layout.add_widget(add_button)
         btn_layout.add_widget(back_button)
         btn_layout.add_widget(clear_button)
         self.layout.add_widget(btn_layout)
+
+        # Menu items scrollview (now below the input fields)
+        self.scroll = ScrollView(size_hint=(1, 0.7))
+        self.menu_grid = GridLayout(cols=1, spacing=10, size_hint_y=None, size_hint_x=1)
+        self.menu_grid.bind(minimum_height=self.menu_grid.setter('height'))
+        self.scroll.add_widget(self.menu_grid)
+        self.layout.add_widget(self.scroll)
 
     @error_handler
     def on_pre_enter(self):
@@ -336,5 +343,5 @@ class AdminMenuScreen(BaseScreen):
         self.menu_grid.clear_widgets()
         self.item_input.text = ""
         self.ingredients_input.text = ""
-        super().on_leave() 
+        super().on_leave()
 

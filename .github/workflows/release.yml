@@ -5,11 +5,13 @@ on:
     tags:
       - 'v*.*.*'  # Trigger on version tags (v1.2.3)
 
+# Set default permissions for all jobs
+permissions:
+  contents: write
+
 jobs:
   create_release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     
     steps:
     - name: Checkout code
@@ -33,10 +35,13 @@ jobs:
         draft: false
         prerelease: ${{ contains(steps.extract_version.outputs.version, '-') }}
         generate_release_notes: true
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   build_release:
     needs: create_release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Add write permissions for contents
     container:
       image: kivy/python-for-android:latest
       options: --user root
@@ -76,11 +81,16 @@ jobs:
         echo "Building release for ${{ github.ref_name }}"
         buildozer --verbose android release 2>&1 | tee artifacts/build_aab.log
     
+    - name: List built files
+      run: |
+        echo "Checking for AAB files in bin directory:"
+        ls -la bin/
+        find . -name "*.aab" | xargs -I{} ls -la {}
+    
     - name: Upload Release Assets
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
         files: |
           bin/*.aab
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}

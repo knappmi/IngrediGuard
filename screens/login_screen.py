@@ -23,7 +23,7 @@ class LoginScreen(BaseScreen):
             spacing=dp(20),
             padding=[dp(30), dp(30), dp(30), dp(30)],
             size_hint=(None, None),
-            width=dp(500),
+            width=dp(350),  # Reduced from 500 to 350
             height=dp(400),
             pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
