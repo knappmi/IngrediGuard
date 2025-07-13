@@ -2,6 +2,7 @@ from screens.base_screen import BaseScreen
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.logger import Logger
 from utils.error_handler import error_handler
@@ -13,51 +14,85 @@ class AllergyScreen(BaseScreen):
         Logger.info("[AllergyScreen] Initializing Allergy Screen")
         super().__init__(**kwargs)
 
+        # Add a spacer at the top to center content better
+        self.layout.add_widget(Widget(size_hint_y=None, height=20))
+
         self.layout.add_widget(Label(
             text='Tell me what to watch out for.\n(e.g., "peanut", "milk, soy", etc.)',
             markup=True,
-            height=80,
+            height=50,  # Reduced from 60 to 50
             size_hint_y=None,
             halign='center',
             valign='middle'
         ))
-        self.allergen_input = TextInput(hint_text='Type allergen(s)...', multiline=False)
-        self.layout.add_widget(self.allergen_input)
+        
+        # Reduce space between label and input
+        self.layout.add_widget(Widget(size_hint_y=None, height=5))
+        
+        # Input field with limited width
+        input_wrapper = BoxLayout(
+            orientation='horizontal',
+            size_hint_y=None,
+            height=40  # Reduced from 50 to 40
+        )
+        
+        self.allergen_input = TextInput(
+            hint_text='Type allergen(s)...',
+            multiline=False,
+            size_hint_x=0.7,  # Width at 70%
+            size_hint_y=None,
+            height=30,  # Explicitly setting a lower height
+            pos_hint={'center_x': 0.5}
+        )
+        
+        input_wrapper.add_widget(self.allergen_input)
+        self.layout.add_widget(input_wrapper)
 
-        # Create a button wrapper to center the button
+        # Button for filtering - slightly larger
         button_wrapper = BoxLayout(
             orientation='horizontal',
             size_hint_y=None,
-            height=60,
-            padding=[0, 10, 0, 0]
+            height=60,  # Reduced from 70 to 60
+            padding=[0, 10, 0, 0]  # Reduced top padding from 15 to 10
         )
         
         self.filter_button = Button(
             text='Show Safe Dishes',
-            size_hint=(0.7, None),  # 70% of the width
-            height=40,              # Reduced height
+            size_hint=(0.8, None),  # 80% of the width
+            height=50,              # Slightly taller
             pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
         self.filter_button.bind(on_press=self.filter_menu)
         
         button_wrapper.add_widget(self.filter_button)
         self.layout.add_widget(button_wrapper)
+        
+        # Add flexible space to push admin and back buttons to the bottom
+        # Use a smaller flexible space since we've reduced other elements' heights
+        self.layout.add_widget(Widget(size_hint_y=0.7))
 
+        # Create admin button but don't add it yet (will be added in on_pre_enter if admin)
         self.admin_btn = Button(text="Admin Tools", size_hint_y=None, height=40)
         self.admin_btn.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))
 
-        self.add_back_button("landing")
+        # Add back button at the bottom
+        back_btn = Button(text="Back", size_hint_y=None, height=40)
+        back_btn.bind(on_press=lambda x: setattr(self.manager, 'current', 'landing'))
+        self.layout.add_widget(back_btn)
 
     @error_handler
     def on_pre_enter(self):
         """Check if the user is an admin and update the layout accordingly."""
         Logger.info("[AllergyScreen] Checking admin status")
+        
+        # Always make sure admin button is removed first to prevent duplicates
+        if self.admin_btn in self.layout.children:
+            self.layout.remove_widget(self.admin_btn)
+            
+        # Add admin button above back button if user is admin
         if self.manager.is_admin:
-            if self.admin_btn not in self.layout.children:
-                self.layout.add_widget(self.admin_btn, index=len(self.layout.children) - 1)
-        else:
-            if self.admin_btn in self.layout.children:
-                self.layout.remove_widget(self.admin_btn)
+            # Insert before the last item (back button)
+            self.layout.add_widget(self.admin_btn, index=len(self.layout.children) - 1)
 
     @error_handler
     def filter_menu(self, instance):

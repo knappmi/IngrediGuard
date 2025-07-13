@@ -22,7 +22,17 @@ class AdminMenuScreen(BaseScreen):
         Logger.info("[AdminMenuScreen] Initializing Admin Menu Screen")
         super().__init__(**kwargs)
 
-        # Input fields for adding dishes (moved to the top)
+        # Title for Add Dish section
+        title_label = Label(
+            text="[b]Add Dish[/b]", 
+            markup=True, 
+            size_hint_y=None, 
+            height=40,
+            halign='center'
+        )
+        self.layout.add_widget(title_label)
+
+        # Input fields for adding dishes
         input_layout = BoxLayout(orientation='vertical', size_hint_y=None, height=90, spacing=10)
         
         self.item_input = TextInput(hint_text="Dish name", size_hint_y=None, height=40)
@@ -32,28 +42,42 @@ class AdminMenuScreen(BaseScreen):
         input_layout.add_widget(self.ingredients_input)
         self.layout.add_widget(input_layout)
         
-        # Buttons for actions
-        btn_layout = GridLayout(cols=3, size_hint_y=None, height=40, spacing=10)
+        # Save and Clear buttons at the top
+        top_btn_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height=40, spacing=10, padding=[0, 0, 0, 10])
         
-        add_button = Button(text="Add Dish")
-        back_button = Button(text="Back")
-        clear_button = Button(text="Clear Menu")
+        save_button = Button(
+            text="Save",
+            size_hint_x=0.7
+        )
+        save_button.bind(on_press=self.add_dish)
+        top_btn_layout.add_widget(save_button)
         
-        add_button.bind(on_press=self.add_dish)
-        back_button.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))
-        clear_button.bind(on_press=self.confirm_clear_menu)
-        
-        btn_layout.add_widget(add_button)
-        btn_layout.add_widget(back_button)
-        btn_layout.add_widget(clear_button)
-        self.layout.add_widget(btn_layout)
+        self.layout.add_widget(top_btn_layout)
 
-        # Menu items scrollview (now below the input fields)
+        # Menu items scrollview
         self.scroll = ScrollView(size_hint=(1, 0.7))
         self.menu_grid = GridLayout(cols=1, spacing=10, size_hint_y=None, size_hint_x=1)
         self.menu_grid.bind(minimum_height=self.menu_grid.setter('height'))
         self.scroll.add_widget(self.menu_grid)
         self.layout.add_widget(self.scroll)
+        
+        # Clear menu button placed under the menu list
+        clear_button_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=[10, 10, 10, 0])
+        
+        clear_button = Button(
+            text="Clear Menu",
+            background_color=(0.8, 0.2, 0.2, 1),
+            size_hint_x=0.7,
+            pos_hint={'center_x': 0.5}
+        )
+        clear_button.bind(on_press=self.confirm_clear_menu)
+        clear_button_layout.add_widget(clear_button)
+        self.layout.add_widget(clear_button_layout)
+        
+        # Back button at the bottom
+        back_button = Button(text="Back", size_hint_y=None, height=40)
+        back_button.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))
+        self.layout.add_widget(back_button)
 
     @error_handler
     def on_pre_enter(self):
