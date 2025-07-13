@@ -62,27 +62,34 @@ class AllergyScreen(BaseScreen):
         # Create scrollview for allergen quick filters
         quick_filters_scroll = ScrollView(
             size_hint_y=None,
-            height=120  # Set a fixed height for the quick filters area
+            height=140  # Slightly increased height for better visibility
         )
         
         # Use a grid layout for the quick filter buttons
         quick_filters_grid = GridLayout(
             cols=3,  # 3 buttons per row
-            spacing=5,
-            padding=5,
+            spacing=8,  # Increased spacing
+            padding=8,
             size_hint_y=None
         )
         quick_filters_grid.bind(minimum_height=quick_filters_grid.setter('height'))
         
-        # Add buttons for common allergens
-        common_allergens = list(ALLERGEN_MAP.keys())
-        for allergen in common_allergens:
+        # Add buttons for common allergens - prioritize most common allergens first
+        common_allergens = ['peanut', 'milk', 'egg', 'soy', 'wheat', 'tree nut', 'fish', 'shellfish', 'sesame']
+        # Add remaining allergens
+        remaining_allergens = [a for a in ALLERGEN_MAP.keys() if a not in common_allergens]
+        all_allergens = common_allergens + remaining_allergens
+        
+        for allergen in all_allergens:
             # Create a button for each allergen
             allergen_btn = Button(
                 text=allergen.title(),  # Capitalize the allergen name
                 size_hint_y=None,
                 height=40,
-                background_color=(0.3, 0.6, 0.9, 1.0)  # Light blue color
+                background_normal='',  # Remove default background
+                background_color=(0.3, 0.6, 0.9, 1.0),  # Light blue color
+                color=(1, 1, 1, 1),  # White text
+                font_size=16  # Larger font
             )
             
             # Create a callback that adds this allergen to the input
@@ -124,38 +131,6 @@ class AllergyScreen(BaseScreen):
         
         button_wrapper.add_widget(self.filter_button)
         self.layout.add_widget(button_wrapper)
-        
-        # Quick filter buttons for common allergens
-        self.quick_filter_layout = GridLayout(
-            cols=3,
-            size_hint_y=None,
-            height=40,  # Fixed height
-            padding=[10, 5, 10, 5],
-            spacing=10
-        )
-        
-        # Create buttons for each common allergen
-        self.allergen_buttons = {}
-        for allergen in ALLERGEN_MAP.keys():
-            btn = Button(
-                text=allergen.capitalize(),
-                size_hint_x=None,
-                width=80,  # Fixed width
-                height=40
-            )
-            btn.bind(on_press=self.quick_filter)
-            self.quick_filter_layout.add_widget(btn)
-            self.allergen_buttons[allergen] = btn
-        
-        # Add the quick filter buttons inside a ScrollView for better accessibility
-        self.scroll_view = ScrollView(
-            size_hint=(1, None),
-            size=(self.width, 50),  # Fixed height
-            do_scroll_x=True,
-            do_scroll_y=False
-        )
-        self.scroll_view.add_widget(self.quick_filter_layout)
-        self.layout.add_widget(self.scroll_view)
         
         # Add flexible space to push admin and back buttons to the bottom
         # Use a smaller flexible space since we've added quick filters
@@ -201,25 +176,6 @@ class AllergyScreen(BaseScreen):
 
         self.manager.filtered_menu = filtered_menu
         self.manager.current = 'results'
-
-    @error_handler
-    def quick_filter(self, instance):
-        """
-        Quick filter method for common allergens.
-        """
-        allergen = instance.text.lower()
-        Logger.info(f"[AllergyScreen] Quick filtering menu for allergen: {allergen}")
-        
-        menu_data = self.manager.menu_data
-        filtered_menu = perform_allergy_filter(menu_data, allergen)
-
-        if filtered_menu is None:
-            self.set_status("No safe dishes found for this allergen.")
-            return
-
-        self.manager.filtered_menu = filtered_menu
-        self.manager.current = 'results'
-
 
     def on_leave(self):
         self.allergen_input.text = ""
