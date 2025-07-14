@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IngrediGuard - Food Allergen Scanner App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 1rem;
+        }
+        
+        .app-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 2rem 0;
+        }
+        
+        .info-section {
+            flex-basis: 48%;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .info-section {
+                flex-basis: 100%;
+            }
+        }
+        
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            color: #27ae60;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .cta-button:hover {
+            background-color: #2980b9;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .app-preview {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .app-preview img {
+            max-width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+        
+        .download-section {
+            margin-top: 2rem;
+        }
+        
+        .cta-container {
+            text-align: center;
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>IngrediGuard</h1>
+            <div class="tagline">Your Personal Food Allergen Detective</div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="app-info">
+            <div class="info-section">
+                <h2>About IngrediGuard</h2>
+                <p>IngrediGuard is a mobile application designed to help people with food allergies quickly identify potential allergens in food products and restaurant menus. Using advanced OCR technology, the app scans ingredients lists and menu descriptions to alert users to their specific allergens.</p>
+                
+                <h2>Key Features</h2>
+                <ul class="feature-list">
+                    <li>Menu photo scanning with OCR technology</li>
+                    <li>Personalized allergen profiles</li>
+                    <li>Quick filters for common allergies</li>
+                    <li>Restaurant menu database</li>
+                    <li>Offline scanning capabilities</li>
+                    <li>Allergen severity customization</li>
+                </ul>
+                
+                <div class="download-section">
+                    <a href="https://play.google.com/store/apps/details?id=wgu.capstone.ingrediguard" class="cta-button">Download on Google Play</a>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="app-preview">
+                    <img src="data/icon.png" alt="IngrediGuard App Icon">
+                </div>
+                
+                <h2>How It Works</h2>
+                <p>IngrediGuard uses your phone's camera to scan menus and food packaging. The app processes the text, identifies ingredients, and cross-references them with your personal allergen profile to provide instant alerts about potential allergens in your food.</p>
+                
+                <h2>Stay Safe While Dining</h2>
+                <p>With IngrediGuard, you can eat out with confidence. Our app helps you make informed decisions about what's safe to eat based on your specific dietary restrictions and allergies.</p>
+            </div>
+        </div>
+        
+        <div class="cta-container">
+            <h2>Ready to take control of your food allergies?</h2>
+            <p>Download IngrediGuard today and dine with confidence!</p>
+            <a href="https://play.google.com/store/apps/details?id=wgu.capstone.ingrediguard" class="cta-button">Get IngrediGuard</a>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 IngrediGuard. All rights reserved.</p>
+            <p>
+                <a href="privacy_policy.html">Privacy Policy</a> |
+                <a href="https://github.com/knappmi/IngrediGuard">GitHub</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
