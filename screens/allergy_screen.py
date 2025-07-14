@@ -89,7 +89,7 @@ class AllergyScreen(BaseScreen):
                 background_normal='',  # Remove default background
                 background_color=(0.3, 0.6, 0.9, 1.0),  # Light blue color
                 color=(1, 1, 1, 1),  # White text
-                font_size=16  # Larger font
+                font_size=18  # Larger font
             )
             
             # Create a callback that adds this allergen to the input
