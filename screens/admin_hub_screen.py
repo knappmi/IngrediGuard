@@ -19,6 +19,7 @@ class AdminHubScreen(BaseScreen):
         self.layout.add_widget(self.make_button("Upload Menu", "upload"))
         self.layout.add_widget(self.make_button("Export Menu", on_press=self.export_menu))
         self.layout.add_widget(self.make_button("Edit Menu", "admin_menu"))
+        self.layout.add_widget(self.make_button("User Management", "user_management"))
         if OCR_ENABLED:
             self.layout.add_widget(self.make_button("OCR Settings", "admin_settings"))
 

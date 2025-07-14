@@ -83,10 +83,23 @@ class MenuDatabase:
             writer.writerow(['id', 'item', 'ingredients'])
             writer.writerows(dishes)
 
+    def reset_database(self):
+        """Resets the menu database by deleting all menu items."""
+        try:
+            with self.conn:
+                self.conn.execute("DELETE FROM menu")
+            return True, "Menu database reset successfully"
+        except sqlite3.Error as e:
+            print(f"Database error in reset_database: {e}")
+            return False, f"Database error: {e}"
+            
     def clear_menu(self):
-        cursor = self.conn.cursor()
-        cursor.execute('DELETE FROM menu')
-        self.conn.commit()
+        """Clears all items from the menu."""
+        try:
+            with self.conn:
+                self.conn.execute("DELETE FROM menu")
+        except sqlite3.Error as e:
+            print(f"Database error in clear_menu: {e}")
 
     def close(self):
         """Closes the database connection."""

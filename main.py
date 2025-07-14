@@ -15,8 +15,10 @@ from screens.results_screen import ResultsScreen
 from screens.admin_menu import AdminMenuScreen
 from screens.landing_screen import LandingScreen
 from screens.login_screen import LoginScreen
+from screens.user_management_screen import UserManagementScreen
 from utils.feature_flags import OCR_ENABLED
 from models.menu_database import MenuDatabase
+from models.user_database import UserDatabase
 from version import __version__, get_version
 
 # Conditional import to avoid pulling in OCR dependencies when the feature is
@@ -82,6 +84,7 @@ class AllergyApp(App):
         sm.add_widget(AdminHubScreen(name='admin_hub'))
         sm.add_widget(UploadScreen(name='upload'))
         sm.add_widget(AdminMenuScreen(name='admin_menu'))
+        sm.add_widget(UserManagementScreen(name='user_management'))
         if OCR_ENABLED:
             sm.add_widget(AdminSettingsScreen(name='admin_settings'))
 
