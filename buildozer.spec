@@ -7,7 +7,7 @@ title = IngrediGuard
 package.name = ingrediguard
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = com.ingrediguard
+package.domain = wgu.capstone
 
 # (str) Source code where the main.py live
 source.dir = .
