@@ -75,7 +75,7 @@ class AdminMenuScreen(BaseScreen):
         self.layout.add_widget(clear_button_layout)
         
         # Back button at the bottom
-        back_button = Button(text="Back", size_hint_y=None, height=40)
+        back_button = Button(text="Back to Admin Hub", size_hint_y=None, height=40)
         back_button.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))
         self.layout.add_widget(back_button)
 

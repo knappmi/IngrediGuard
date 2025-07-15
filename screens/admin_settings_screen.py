@@ -44,7 +44,9 @@ class AdminSettingsScreen(BaseScreen):
         self.status_label = Label(text="")
         self.layout.add_widget(self.status_label)
 
-        self.add_back_button("upload")
+        back_button = Button(text="Back", size_hint_y=None, height=40)
+        back_button.bind(on_press=lambda x: setattr(self.manager, 'current', 'admin_hub'))
+        self.layout.add_widget(back_button)
 
     @error_handler
     def on_pre_enter(self):

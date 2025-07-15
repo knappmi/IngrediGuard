@@ -523,7 +523,9 @@ class UploadScreen(BaseScreen):
         # with self.tracer.start_as_current_span("upload_screen._set_back_button") as span:
         Logger.info("UploadScreen: set_back_button called")
         target = "admin_hub" if self.manager and getattr(self.manager, 'is_admin', False) else "landing"
-        self.add_back_button(target)   
+        back_button = Button(text="Back", size_hint_y=None, height=40)
+        back_button.bind(on_press=lambda x: setattr(self.manager, 'current', target))
+        self.layout.add_widget(back_button)
 
     @error_handler
     def clear_preview(self):

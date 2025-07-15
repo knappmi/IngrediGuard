@@ -118,18 +118,26 @@ class UserManagementScreen(BaseScreen):
         self.user_list_layout = GridLayout(
             cols=5, 
             spacing=dp(5),
-            size_hint_y=None
+            size_hint_y=None,
+            row_default_height=dp(40),
+            row_force_default=True
         )
         self.user_list_layout.bind(minimum_height=self.user_list_layout.setter('height'))
         
-        # Headers
-        self.user_list_layout.add_widget(Label(text="Username", bold=True, size_hint_y=None, height=dp(40)))
-        self.user_list_layout.add_widget(Label(text="Admin", bold=True, size_hint_y=None, height=dp(40)))
-        self.user_list_layout.add_widget(Label(text="Status", bold=True, size_hint_y=None, height=dp(40)))
-        self.user_list_layout.add_widget(Label(text="Toggle Admin", bold=True, size_hint_y=None, height=dp(40)))
-        self.user_list_layout.add_widget(Label(text="Toggle Status", bold=True, size_hint_y=None, height=dp(40)))
+        # Headers with column width hints
+        self.user_list_layout.add_widget(Label(text="Username", bold=True, size_hint_y=None, height=dp(40), size_hint_x=0.2))
+        self.user_list_layout.add_widget(Label(text="Admin", bold=True, size_hint_y=None, height=dp(40), size_hint_x=0.15))
+        self.user_list_layout.add_widget(Label(text="Status", bold=True, size_hint_y=None, height=dp(40), size_hint_x=0.15))
+        self.user_list_layout.add_widget(Label(text="Toggle Admin", bold=True, size_hint_y=None, height=dp(40), size_hint_x=0.25))
+        self.user_list_layout.add_widget(Label(text="Toggle Status", bold=True, size_hint_y=None, height=dp(40), size_hint_x=0.25))
         
-        scroll_view = ScrollView(size_hint=(1, 1))
+        # Create scroll view with a fixed height that will expand to fill available space
+        scroll_view = ScrollView(
+            size_hint=(1, 1),
+            do_scroll_x=False,
+            do_scroll_y=True,
+            bar_width=dp(10)
+        )
         scroll_view.add_widget(self.user_list_layout)
         user_list_box.add_widget(scroll_view)
         
@@ -188,7 +196,8 @@ class UserManagementScreen(BaseScreen):
             self.user_list_layout.add_widget(Label(
                 text=user['username'],
                 size_hint_y=None,
-                height=dp(40)
+                height=dp(40),
+                size_hint_x=0.2
             ))
             
             # Admin status
@@ -196,6 +205,7 @@ class UserManagementScreen(BaseScreen):
                 text="Yes" if user['is_admin'] else "No",
                 size_hint_y=None,
                 height=dp(40),
+                size_hint_x=0.15,
                 color=(0.3, 0.7, 0.3, 1) if user['is_admin'] else (0.7, 0.7, 0.7, 1)
             )
             self.user_list_layout.add_widget(admin_label)
@@ -205,6 +215,7 @@ class UserManagementScreen(BaseScreen):
                 text="Active" if user['is_active'] else "Disabled",
                 size_hint_y=None,
                 height=dp(40),
+                size_hint_x=0.15,
                 color=(0.3, 0.7, 0.3, 1) if user['is_active'] else (1, 0.3, 0.3, 1)
             )
             self.user_list_layout.add_widget(status_label)
@@ -213,7 +224,9 @@ class UserManagementScreen(BaseScreen):
             admin_btn = Button(
                 text="Make Admin" if not user['is_admin'] else "Remove Admin",
                 size_hint_y=None,
-                height=dp(40)
+                height=dp(40),
+                size_hint_x=0.25,
+                font_size=dp(13)
             )
             admin_btn.user_id = user['id']
             admin_btn.is_admin = not user['is_admin']  # The opposite of current state
@@ -225,6 +238,8 @@ class UserManagementScreen(BaseScreen):
                 text="Disable" if user['is_active'] else "Enable",
                 size_hint_y=None,
                 height=dp(40),
+                size_hint_x=0.25,
+                font_size=dp(13),
                 background_color=(1, 0.5, 0.5, 1) if user['is_active'] else (0.5, 1, 0.5, 1)
             )
             status_btn.user_id = user['id']

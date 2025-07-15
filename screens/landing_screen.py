@@ -33,7 +33,7 @@ class LandingScreen(BaseScreen):
         )
         self.layout.add_widget(self.version_label)
 
-        self.add_back_button("login")
+        self.add_logout_button("login")
 
     @error_handler
     def on_pre_enter(self):
