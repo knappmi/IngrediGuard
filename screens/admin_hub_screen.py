@@ -23,7 +23,7 @@ class AdminHubScreen(BaseScreen):
         if OCR_ENABLED:
             self.layout.add_widget(self.make_button("OCR Settings", "admin_settings"))
 
-        self.add_logout_button("login")
+        self.add_back_button("landing")
 
     @error_handler
     def make_button(self, text, screen=None, on_press=None):

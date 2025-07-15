@@ -127,9 +127,11 @@ Regular users have access to:
 
 ### Logging Out
 
-1. Click the "Log Out" button on the main screen
-2. Confirm logout in the dialog
+1. Click the "Log Out" button on the landing screen
+2. Confirm logout in the confirmation dialog
 3. User is returned to the login screen
+
+The logout button includes a confirmation dialog to prevent accidental logouts, enhancing the user experience by avoiding unintended session terminations.
 
 ## Default Configuration
 
@@ -160,6 +162,25 @@ The user management system includes a comprehensive test suite in `tests/test_us
 - User status management
 - Database reset functionality
 - Edge cases like duplicate users and disabled accounts
+
+## User Interface Design
+
+The user management system incorporates several UI design principles to enhance usability:
+
+- Clear separation between user creation and management sections
+- Color-coded buttons for destructive actions (red for delete/disable, green for enable)
+- Confirmation dialogs for critical actions (logout, database reset)
+- Responsive grid layout with proper spacing for user list
+- Scrollable user list for handling any number of user accounts
+- Consistent button sizes and padding throughout the interface
+- Visual indicators for user status (active/disabled) and role (admin/regular)
+
+### Demo Features
+
+To facilitate testing and demonstration of the application, several demo features are included:
+
+- **Demo Menu**: Accessible from the Upload Menu screen, this feature loads a pre-configured menu with common restaurant items containing various allergens for testing the allergen detection functionality without requiring a menu file or photo.
+- **Default Admin Account**: A default admin account (username: admin, password: admin) is created automatically to ensure immediate access to administrative features.
 
 ## Future Enhancements
 

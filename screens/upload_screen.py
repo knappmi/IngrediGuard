@@ -40,20 +40,33 @@ class UploadScreen(BaseScreen):
 
         Logger.info("UploadScreen: Initializing UploadScreen")
         
-        button_row = BoxLayout(orientation='horizontal', spacing=10, size_hint_y=None, height=50)
+        button_row1 = BoxLayout(orientation='horizontal', spacing=10, size_hint_y=None, height=50)
         
         self.select_button = Button(text='Select File', size_hint_x=0.5)
         self.select_button.bind(on_press=self.open_filechooser)
-        button_row.add_widget(self.select_button)
+        button_row1.add_widget(self.select_button)
         
         # Only show the camera capture option when OCR functionality is
         # enabled via the global feature flag.
         if OCR_ENABLED:
             self.camera_button = Button(text='Capture Menu Photo', size_hint_x=0.5)
             self.camera_button.bind(on_press=self.capture_photo)
-            button_row.add_widget(self.camera_button)
+            button_row1.add_widget(self.camera_button)
         
-        self.layout.add_widget(button_row)
+        self.layout.add_widget(button_row1)
+        
+        # Demo menu button row
+        button_row2 = BoxLayout(orientation='horizontal', spacing=10, size_hint_y=None, height=50)
+        
+        self.demo_button = Button(
+            text='Load Demo Menu', 
+            size_hint_x=1.0,
+            background_color=(0.3, 0.6, 1.0, 1.0)  # Light blue color
+        )
+        self.demo_button.bind(on_press=self.load_demo_menu)
+        button_row2.add_widget(self.demo_button)
+        
+        self.layout.add_widget(button_row2)
         Logger.info("UploadScreen: File selection buttons added")
 
         self.preview_container = BoxLayout(orientation='vertical', size_hint_y=None)
@@ -453,35 +466,17 @@ class UploadScreen(BaseScreen):
             return
         Logger.info(f"UploadScreen: Menu data for preview -- {menu_data}")
 
-        preview_lines = []
-        for i, row in enumerate(menu_data[:100], 1):
-            item = row['item'].strip()
-            ingredients = row['ingredients']
-            if isinstance(ingredients, list):
-                ingredients = ', '.join(ingredients)
-            ingredients = ingredients.strip()
-            preview_lines.append(f"{i}. [b]{item}[/b]")
-            preview_lines.append(f"   Ingredients: {ingredients}")
-            preview_lines.append("")  # Add blank line between items
-        
-        preview_text = "\n".join(preview_lines)
-        Logger.info(f"UploadScreen: Preview text -- {preview_text}")
-        
+        # Clear existing preview
         self.preview_container.clear_widgets()
-        preview_label = Label(
-            text=preview_text,
-            size_hint_y=None,
-            text_size=(self.preview_container.width - 20, None),
-            halign='left',
-            valign='top',
-            markup=True,
-            padding=(10, 10)
-        )
-        preview_label.bind(
-            texture_size=lambda instance, value: setattr(instance, 'height', value[1]),
-            width=lambda instance, value: setattr(instance, 'text_size', (value - 20, None))
-        )
-        self.preview_container.add_widget(preview_label)
+        
+        # Add header row
+        self.add_preview_header()
+        
+        # Add menu items (limit to first 100)
+        for item in menu_data[:100]:
+            self.add_preview_item(item)
+        
+        Logger.info(f"UploadScreen: Added {len(menu_data[:100])} items to preview")
 
     @error_handler
     def confirm_menu(self, instance):
@@ -553,3 +548,119 @@ class UploadScreen(BaseScreen):
         self.is_ocr_mode = False
         self.set_status('')
         super().on_leave()
+
+    @error_handler
+    def load_demo_menu(self, instance):
+        """Load a demo menu with common restaurant items including allergens."""
+        Logger.info("UploadScreen: Loading demo menu")
+        self.set_status("Loading demo menu...")
+        
+        # Create a demo menu with a variety of common restaurant items
+        # including items with common allergens
+        demo_menu = [
+            {
+                'item': 'Classic Cheeseburger',
+                'ingredients': 'beef patty, cheddar cheese, lettuce, tomato, onion, mayo, mustard, wheat bun'
+            },
+            {
+                'item': 'Grilled Chicken Sandwich',
+                'ingredients': 'grilled chicken breast, lettuce, tomato, mayo, wheat bun'
+            },
+            {
+                'item': 'Caesar Salad',
+                'ingredients': 'romaine lettuce, parmesan cheese, croutons, caesar dressing, anchovies'
+            },
+            {
+                'item': 'Veggie Pizza',
+                'ingredients': 'wheat crust, tomato sauce, mozzarella, bell peppers, onions, mushrooms, olives'
+            },
+            {
+                'item': 'Spaghetti and Meatballs',
+                'ingredients': 'pasta, tomato sauce, beef meatballs, parmesan, wheat flour'
+            },
+            {
+                'item': 'Fish and Chips',
+                'ingredients': 'cod, beer batter, flour, potato, vegetable oil'
+            },
+            {
+                'item': 'Pad Thai',
+                'ingredients': 'rice noodles, chicken, egg, peanuts, bean sprouts, green onions, fish sauce'
+            },
+            {
+                'item': 'Chocolate Brownie Sundae',
+                'ingredients': 'flour, sugar, cocoa powder, eggs, butter, vanilla ice cream, walnuts'
+            },
+            {
+                'item': 'Breakfast Platter',
+                'ingredients': 'eggs, bacon, toast, butter, hash browns, wheat bread'
+            },
+            {
+                'item': 'Shrimp Scampi',
+                'ingredients': 'shrimp, garlic, butter, white wine, lemon juice, parsley, pasta'
+            }
+        ]
+        
+        # Set the parsed menu data
+        self.parsed_menu_data = demo_menu
+        
+        # Update the UI
+        self.preview_container.clear_widgets()
+        self.add_preview_header()
+        
+        # Add menu items to the preview
+        for item in demo_menu:
+            self.add_preview_item(item)
+        
+        # Enable the confirm button
+        self.confirm_button.disabled = False
+        
+        self.set_status("Demo menu loaded successfully. Review and press 'Confirm and Save'.")
+        
+    def add_preview_header(self):
+        """Add a header row to the preview container."""
+        header = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
+        
+        item_label = Label(text='Item', bold=True, size_hint_x=0.4)
+        ingredients_label = Label(text='Ingredients', bold=True, size_hint_x=0.6)
+        
+        header.add_widget(item_label)
+        header.add_widget(ingredients_label)
+        
+        self.preview_container.add_widget(header)
+
+    def add_preview_item(self, item):
+        """Add a menu item to the preview container."""
+        item_row = BoxLayout(orientation='horizontal', size_hint_y=None, height=60)
+        
+        # Item name (left column)
+        item_name = Label(
+            text=item['item'],
+            halign='left',
+            valign='middle',
+            size_hint_x=0.4,
+            text_size=(None, None)
+        )
+        item_name.bind(
+            size=lambda *_: setattr(item_name, 'text_size', (item_name.width - 10, None))
+        )
+        
+        # Ingredients (right column)
+        ingredients_text = item['ingredients']
+        if isinstance(ingredients_text, list):
+            ingredients_text = ', '.join(ingredients_text)
+            
+        ingredients = Label(
+            text=ingredients_text,
+            halign='left',
+            valign='middle',
+            size_hint_x=0.6,
+            text_size=(None, None)
+        )
+        ingredients.bind(
+            size=lambda *_: setattr(ingredients, 'text_size', (ingredients.width - 10, None))
+        )
+        
+        item_row.add_widget(item_name)
+        item_row.add_widget(ingredients)
+        
+        self.preview_container.add_widget(item_row)
