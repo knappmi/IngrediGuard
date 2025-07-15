@@ -41,9 +41,13 @@ class BaseScreen(Screen):
         self.set_status('')
 
     @error_handler
-    def add_logout_button(self):
-        """Add a logout button with confirmation that returns to the login screen."""
-        Logger.info(f"BaseScreen: Adding logout button")
+    def add_logout_button(self, target_screen='login'):
+        """Add a logout button with confirmation that returns to the login screen.
+        
+        Args:
+            target_screen: The screen to navigate to after logout (default: 'login')
+        """
+        Logger.info(f"Calling add_logout_button on {self.__class__.__name__}")
         btn = Button(
             text='Log Out', 
             size_hint_y=None, 
